@@ -1,3 +1,6 @@
+import inquirer from "inquirer"
+import boxen from "boxen"
+import open from "open"
 import path from "path"
 import { execSync } from "child_process"
 import spawn from "cross-spawn"
@@ -5,11 +8,31 @@ import chokidar from "chokidar"
 
 import Logger from "../loaders/logger"
 
+const defaultConfig = {
+  padding: 5,
+  borderColor: `blue`,
+  borderStyle: `double`,
+}
+
 export default async function ({ port, directory }) {
   const args = process.argv
   args.shift()
   args.shift()
   args.shift()
+
+  process.on("SIGINT", () => {
+    const defaultMessage =
+      `Thanks for using Medusa.\n` +
+      `If you liked it, please consider giving it a star on GitHub\n` +
+      `https://github.com/medusajs/medusa\n` +
+      `\n` +
+      `Note: you will not see this message again.`
+
+    console.log()
+    console.log(boxen(defaultMessage, defaultConfig))
+
+    process.exit(0)
+  })
 
   const babelPath = path.join(directory, "node_modules", ".bin", "babel")
 
